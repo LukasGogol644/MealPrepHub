@@ -134,6 +134,14 @@ def ai_planner():
     """Rendert KI-Planer-Seite"""
     return render_template('ai_planner.html')
 
+# ==========================================
+# ROUTE: IMPRESSUM
+# ==========================================
+@app.route('/impressum')
+def impressum():
+    """Rendert Impressum-Seite"""
+    return render_template('impressum.html')
+
 
 # ==========================================
 # ROUTE 10: KI-WOCHENPLAN GENERATOR

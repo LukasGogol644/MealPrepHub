@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📅 Wochenplan - MealPrep Hub</title>
+    <title>Wochenplan - MealPrep Hub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -12,12 +12,12 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <span class="fs-3">🍱</span> MealPrep Hub
+                MealPrep Hub
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/">🏠 Home</a>
-                <a class="nav-link active" href="/week-plan">📅 Wochenplan</a>
-                <a class="nav-link" href="/shopping-list">🛒 Einkaufsliste</a>
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link active" href="/week-plan">Wochenplan</a>
+                <a class="nav-link" href="/shopping-list">Einkaufsliste</a>
             </div>
         </div>
     </nav>
@@ -25,13 +25,13 @@
     <!-- Week Plan Content -->
     <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="fw-bold">📅 Mein Wochenplan</h1>
+            <h1 class="fw-bold">Mein Wochenplan</h1>
             <div>
                 <button class="btn btn-success" onclick="generateShoppingList()">
-                    🛒 Einkaufsliste erstellen
+                    Einkaufsliste erstellen
                 </button>
                 <button class="btn btn-danger" onclick="clearWeekPlan()">
-                    🗑️ Alles löschen
+                    Plan löschen
                 </button>
             </div>
         </div>
@@ -43,11 +43,25 @@
 
         <!-- Empty State -->
         <div id="emptyState" class="text-center py-5 d-none">
-            <h3 class="text-muted">📭 Dein Wochenplan ist noch leer</h3>
-            <p class="text-muted">Suche nach Rezepten und füge sie zu deinem Plan hinzu!</p>
-            <a href="/" class="btn btn-primary">🔍 Rezepte suchen</a>
+            <h3 class="text-muted">Ihr Wochenplan ist leer</h3>
+            <p class="text-muted">Erstellen Sie einen personalisierten Plan auf der Startseite</p>
+            <a href="/" class="btn btn-primary">Zur Startseite</a>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container text-center">
+            <p class="mb-0 fs-5">MealPrep Hub © 2026</p>
+            <small class="text-muted d-block mb-3">KI-gestützter Wochenplaner für gesunde Ernährung</small>
+
+            <div class="mt-3">
+                <a href="/impressum" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">
+                    Impressum
+                </a>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -98,7 +112,7 @@
                                                     <span class="badge bg-primary">${meal.category}</span>
                                                     <button class="btn btn-sm btn-danger mt-2 w-100"
                                                             onclick="removeMeal('${dayKey}', ${index})">
-                                                        🗑️ Entfernen
+                                                        Entfernen
                                                     </button>
                                                 </div>
                                             </div>
@@ -123,7 +137,7 @@
         }
 
         function removeMeal(day, index) {
-            if (!confirm('Möchtest du diese Mahlzeit wirklich entfernen?')) return;
+            if (!confirm('Möchten Sie diese Mahlzeit wirklich entfernen?')) return;
 
             let weekPlan = JSON.parse(localStorage.getItem('weekPlan') || '{}');
             weekPlan[day].splice(index, 1);
@@ -137,7 +151,7 @@
         }
 
         function clearWeekPlan() {
-            if (!confirm('Möchtest du wirklich den gesamten Wochenplan löschen?')) return;
+            if (!confirm('Möchten Sie wirklich den gesamten Wochenplan löschen?')) return;
 
             localStorage.removeItem('weekPlan');
             loadWeekPlan();
@@ -148,7 +162,7 @@
             const totalMeals = Object.values(weekPlan).reduce((sum, meals) => sum + meals.length, 0);
 
             if (totalMeals === 0) {
-                alert('⚠️ Dein Wochenplan ist leer. Füge erst Rezepte hinzu!');
+                alert('Ihr Wochenplan ist leer. Bitte erstellen Sie zuerst einen Plan.');
                 return;
             }
 
