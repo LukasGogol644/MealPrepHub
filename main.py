@@ -10,7 +10,7 @@ import re
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'mealprep-secret-key-2024')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'mealprep-secret-key-2026')
 
 # API Configuration
 THEMEALDB_BASE_URL = "https://www.themealdb.com/api/json/v1/1"
