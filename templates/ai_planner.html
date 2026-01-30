@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 KI-Wochenplan Generator - MealPrep Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .goal-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .goal-card.selected {
+            border-color: #0d6efd;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .goal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="fs-3">🍱</span> MealPrep Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">🏠 Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/ai-planner">🤖 KI-Planer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/week-plan">📅 Wochenplan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shopping-list">🛒 Einkaufsliste</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Hero Section -->
+        <div class="hero-section text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">🤖 KI-Wochenplan Generator</h1>
+            <p class="lead mb-4">
+                Wähle dein Ziel und lass künstliche Intelligenz deinen perfekten Wochenplan erstellen!
+            </p>
+        </div>
+
+        <!-- Step 1: Goal Selection -->
+        <div id="step1" class="mb-5">
+            <h2 class="text-center text-white mb-4">Schritt 1: Wähle dein Ziel 🎯</h2>
+            <div class="row g-4" id="goalSelection">
+                <div class="col-md-4">
+                    <div class="card goal-card h-100 text-center p-4" onclick="selectGoal('Muskelaufbau', this)">
+                        <div class="goal-icon">💪</div>
+                        <h4>Muskelaufbau</h4>
+                        <p class="text-muted">Protein-reich, viele Kalorien</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card goal-card h-100 text-center p-4" onclick="selectGoal('Abnehmen', this)">
+                        <div class="goal-icon">🔥</div>
+                        <h4>Abnehmen</h4>
+                        <p class="text-muted">Kaloriendefizit, ausgewogen</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card goal-card h-100 text-center p-4" onclick="selectGoal('Gesund essen', this)">
+                        <div class="goal-icon">🥗</div>
+                        <h4>Gesund essen</h4>
+                        <p class="text-muted">Ausgewogen, nährstoffreich</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card goal-card h-100 text-center p-4" onclick="selectGoal('Vegan', this)">
+                        <div class="goal-icon">🌱</div>
+                        <h4>Vegan</h4>
+                        <p class="text-muted">100% pflanzlich</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card goal-card h-100 text-center p-4" onclick="selectGoal('Vegetarisch', this)">
+                        <div class="goal-icon">🥬</div>
+                        <h4>Vegetarisch</h4>
+                        <p class="text-muted">Kein Fleisch, kein Fisch</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card goal-card h-100 text-center p-4" onclick="selectGoal('Energie & Leistung', this)">
+                        <div class="goal-icon">⚡</div>
+                        <h4>Energie & Leistung</h4>
+                        <p class="text-muted">Für Sportler, viel Energie</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Fine-tuning -->
+        <div id="step2" class="mb-5 d-none">
+            <h2 class="text-center text-white mb-4">Schritt 2: Feinabstimmung ⚙️</h2>
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Kalorien pro Tag:</label>
+                            <input type="range" class="form-range" id="caloriesSlider"
+                                   min="1200" max="4000" step="100" value="2000"
+                                   oninput="updateCaloriesValue(this.value)">
+                            <div class="text-center">
+                                <span id="caloriesValue" class="badge bg-primary fs-5">2000 kcal</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Protein pro Tag:</label>
+                            <input type="range" class="form-range" id="proteinSlider"
+                                   min="50" max="250" step="10" value="100"
+                                   oninput="updateProteinValue(this.value)">
+                            <div class="text-center">
+                                <span id="proteinValue" class="badge bg-success fs-5">100g Protein</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary btn-lg px-5" onclick="generatePlan()">
+                            <span id="generateBtnText">🤖 Wochenplan jetzt generieren</span>
+                            <span id="generateSpinner" class="d-none">
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Generiere mit KI...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loadingSection" class="text-center my-5 d-none">
+            <div class="spinner-border text-white" style="width: 4rem; height: 4rem;"></div>
+            <h3 class="text-white mt-4">🤖 KI erstellt deinen optimalen Wochenplan...</h3>
+            <p class="text-white">Das kann 10-20 Sekunden dauern</p>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsSection" class="d-none">
+            <h2 class="text-center text-white mb-4">✅ Dein KI-generierter Wochenplan</h2>
+
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">🤖 KI-Analyse</h4>
+                </div>
+                <div class="card-body">
+                    <div id="aiReasoning" class="alert alert-info"></div>
+                </div>
+            </div>
+
+            <div id="weekPlanDisplay" class="row g-4"></div>
+
+            <div class="text-center mt-5">
+                <button class="btn btn-success btn-lg px-5" onclick="saveToWeekPlan()">
+                    💾 Zum Wochenplan hinzufügen
+                </button>
+                <button class="btn btn-outline-light btn-lg px-5 ms-3" onclick="location.reload()">
+                    🔄 Neuen Plan erstellen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedGoal = null;
+        let currentPlan = null;
+
+        function selectGoal(goal, element) {
+            selectedGoal = goal;
+
+            // Visual feedback
+            document.querySelectorAll('.goal-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+
+            // Set default values based on goal
+            const defaults = {
+                'Muskelaufbau': { calories: 2500, protein: 150 },
+                'Abnehmen': { calories: 1800, protein: 120 },
+                'Gesund essen': { calories: 2000, protein: 100 },
+                'Vegan': { calories: 2000, protein: 80 },
+                'Vegetarisch': { calories: 2000, protein: 90 },
+                'Energie & Leistung': { calories: 2800, protein: 140 }
+            };
+
+            const settings = defaults[goal];
+            document.getElementById('caloriesSlider').value = settings.calories;
+            document.getElementById('proteinSlider').value = settings.protein;
+            updateCaloriesValue(settings.calories);
+            updateProteinValue(settings.protein);
+
+            // Show step 2
+            document.getElementById('step2').classList.remove('d-none');
+            document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function updateCaloriesValue(value) {
+            document.getElementById('caloriesValue').textContent = value + ' kcal';
+        }
+
+        function updateProteinValue(value) {
+            document.getElementById('proteinValue').textContent = value + 'g Protein';
+        }
+
+        async function generatePlan() {
+            if (!selectedGoal) {
+                alert('⚠️ Bitte wähle erst ein Ziel!');
+                return;
+            }
+
+            const calories = parseInt(document.getElementById('caloriesSlider').value);
+            const protein = parseInt(document.getElementById('proteinSlider').value);
+
+            // UI Updates
+            document.getElementById('generateBtnText').classList.add('d-none');
+            document.getElementById('generateSpinner').classList.remove('d-none');
+            document.getElementById('loadingSection').classList.remove('d-none');
+            document.getElementById('resultsSection').classList.add('d-none');
+
+            try {
+                const response = await fetch('/api/generate-ai-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        goal: selectedGoal,
+                        calories: calories,
+                        protein: protein
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentPlan = data.plan;
+                    displayPlan(data);
+                } else {
+                    alert('❌ Fehler: ' + data.error);
+                }
+
+            } catch (error) {
+                alert('❌ Fehler beim Generieren: ' + error);
+            } finally {
+                document.getElementById('generateBtnText').classList.remove('d-none');
+                document.getElementById('generateSpinner').classList.add('d-none');
+                document.getElementById('loadingSection').classList.add('d-none');
+            }
+        }
+
+        function displayPlan(data) {
+            const reasoning = document.getElementById('aiReasoning');
+            const display = document.getElementById('weekPlanDisplay');
+            const resultsSection = document.getElementById('resultsSection');
+
+            // Reasoning
+            reasoning.innerHTML = `
+                <h5><strong>🎯 Dein Ziel:</strong> ${data.goal}</h5>
+                <p><strong>📊 Tagesziele:</strong> ${data.daily_targets.calories} kcal • ${data.daily_targets.protein}g Protein</p>
+                <hr>
+                <p><strong>🤖 KI-Empfehlung:</strong> ${data.plan.reasoning || 'Optimaler Plan für dein Ziel!'}</p>
+            `;
+
+            // Week Plan
+            const days = {
+                'monday': { name: 'Montag', emoji: '📅' },
+                'tuesday': { name: 'Dienstag', emoji: '📅' },
+                'wednesday': { name: 'Mittwoch', emoji: '📅' },
+                'thursday': { name: 'Donnerstag', emoji: '📅' },
+                'friday': { name: 'Freitag', emoji: '📅' },
+                'saturday': { name: 'Samstag', emoji: '🎉' },
+                'sunday': { name: 'Sonntag', emoji: '🎉' }
+            };
+
+            let html = '';
+
+            for (const [dayKey, dayInfo] of Object.entries(days)) {
+                if (data.plan[dayKey]) {
+                    const dayData = data.plan[dayKey];
+                    html += `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 shadow">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">${dayInfo.emoji} ${dayInfo.name}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">🌅 Frühstück</h6>
+                                        ${dayData.breakfast_thumb ? `<img src="${dayData.breakfast_thumb}" class="img-fluid rounded mb-2" style="height:100px; width:100%; object-fit:cover;">` : ''}
+                                        <p class="fw-bold">${dayData.breakfast || '-'}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">🌞 Mittagessen</h6>
+                                        ${dayData.lunch_thumb ? `<img src="${dayData.lunch_thumb}" class="img-fluid rounded mb-2" style="height:100px; width:100%; object-fit:cover;">` : ''}
+                                        <p class="fw-bold">${dayData.lunch || '-'}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">🌙 Abendessen</h6>
+                                        ${dayData.dinner_thumb ? `<img src="${dayData.dinner_thumb}" class="img-fluid rounded mb-2" style="height:100px; width:100%; object-fit:cover;">` : ''}
+                                        <p class="fw-bold">${dayData.dinner || '-'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            display.innerHTML = html;
+            resultsSection.classList.remove('d-none');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function saveToWeekPlan() {
+            if (!currentPlan) {
+                alert('⚠️ Kein Plan zum Speichern!');
+                return;
+            }
+
+            // Convert AI plan to week plan format
+            const weekPlan = {};
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            for (const day of days) {
+                if (currentPlan[day]) {
+                    weekPlan[day] = [];
+
+                    const meals = ['breakfast', 'lunch', 'dinner'];
+                    for (const meal of meals) {
+                        if (currentPlan[day][meal]) {
+                            weekPlan[day].push({
+                                id: currentPlan[day][`${meal}_id`] || 'unknown',
+                                name: currentPlan[day][meal],
+                                thumb: currentPlan[day][`${meal}_thumb`] || '',
+                                category: 'AI Generated'
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Save to localStorage
+            localStorage.setItem('weekPlan', JSON.stringify(weekPlan));
+
+            alert('✅ Wochenplan wurde gespeichert!');
+            window.location.href = '/week-plan';
+        }
+    </script>
+</body>
+</html>
