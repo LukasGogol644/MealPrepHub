@@ -1,8 +1,8 @@
-# 🍱 MealPrep Hub
+# MealPrep Hub
 
 Eine umfassende Webanwendung zur Essensplanung und Rezeptsuche, entwickelt mit Flask. MealPrep Hub hilft Nutzern bei der Planung ihrer wöchentlichen Mahlzeiten, beim Entdecken von Rezepten, beim Erstellen von Einkaufslisten und beim Generieren von KI-gestützten Essensplänen, die auf ihre Ernährungsziele zugeschnitten sind.
 
-## 📋 Inhaltsverzeichnis
+## Inhaltsverzeichnis
 
 - [Funktionen](#funktionen)
 - [Verwendete Technologien](#verwendete-technologien)
@@ -15,20 +15,20 @@ Eine umfassende Webanwendung zur Essensplanung und Rezeptsuche, entwickelt mit F
 - [Screenshots](#screenshots)
 - [Lizenz](#lizenz)
 
-## ✨ Funktionen
+## Funktionen
 
-- **🔍 Rezeptsuche**: Durchsuche tausende Rezepte von der TheMealDB API
-- **📂 Kategorie-Browsen**: Stöbere durch Rezepte nach Kategorien (Rind, Hähnchen, Dessert, etc.)
-- **📅 Wöchentliche Essensplanung**: Erstelle und verwalte wöchentliche Essenspläne
-- **🛒 Einkaufsliste**: Generiere Einkaufslisten aus deinen Essensplänen
-- **🤖 KI-gestützte Essensplanung**: Erhalte personalisierte wöchentliche Essenspläne mit OpenAI GPT-4
+- **Rezeptsuche**: Durchsuche tausende Rezepte von der TheMealDB API
+- **Kategorie-Browsen**: Stöbere durch Rezepte nach Kategorien (Rind, Hähnchen, Dessert, etc.)
+- **Wöchentliche Essensplanung**: Erstelle und verwalte wöchentliche Essenspläne
+- **Einkaufsliste**: Generiere Einkaufslisten aus deinen Essensplänen
+- **KI-gestützte Essensplanung**: Erhalte personalisierte wöchentliche Essenspläne mit OpenAI GPT-4
   - Anpassbare Ziele (Muskelaufbau, Gewichtsverlust, Gesunde Ernährung, etc.)
   - Kalorien- und Proteinziele
   - Ernährungspräferenzen (Vegan, Vegetarisch, etc.)
-- **🎲 Zufällige Rezeptentdeckung**: Lass dich von zufälligen Rezeptvorschlägen inspirieren
-- **📱 Responsives Design**: Mobile-freundliche Benutzeroberfläche mit Bootstrap 5
+- **Zufällige Rezeptentdeckung**: Lass dich von zufälligen Rezeptvorschlägen inspirieren
+- **Responsives Design**: Mobile-freundliche Benutzeroberfläche mit Bootstrap 5
 
-## 🛠 Verwendete Technologien
+## Verwendete Technologien
 
 ### Backend
 - **Python 3.x**
@@ -46,7 +46,7 @@ Eine umfassende Webanwendung zur Essensplanung und Rezeptsuche, entwickelt mit F
 - **TheMealDB API** - Rezeptdatenbank
 - **OpenAI GPT-4** - Intelligente Essensplanung
 
-## 📦 Voraussetzungen
+## Voraussetzungen
 
 Bevor du dieses Projekt ausführst, stelle sicher, dass Folgendes installiert ist:
 
@@ -54,7 +54,7 @@ Bevor du dieses Projekt ausführst, stelle sicher, dass Folgendes installiert is
 - pip (Python Package Manager)
 - Ein OpenAI API-Schlüssel (für die KI-Essensplanungsfunktion)
 
-## 🚀 Installation
+## Installation
 
 1. **Repository klonen**
    ```bash
@@ -78,7 +78,7 @@ Bevor du dieses Projekt ausführst, stelle sicher, dass Folgendes installiert is
    pip install -r requirements.txt
    ```
 
-## ⚙️ Konfiguration
+## Konfiguration
 
 1. **Erstelle eine `.env` Datei** im Hauptverzeichnis (oder kopiere von `.env.example`, falls vorhanden)
 
@@ -103,7 +103,7 @@ Bevor du dieses Projekt ausführst, stelle sicher, dass Folgendes installiert is
    - Erstelle einen neuen API-Schlüssel
    - Kopiere ihn und füge ihn in deine `.env` Datei ein
 
-## 🎮 Verwendung
+## Verwendung
 
 1. **Starte den Flask-Entwicklungsserver**:
    ```bash
@@ -123,7 +123,7 @@ Bevor du dieses Projekt ausführst, stelle sicher, dass Folgendes installiert is
    - **Wochenplan** (`/week-plan`) - Wöchentliche Essenspläne erstellen und verwalten
    - **Einkaufsliste** (`/shopping-list`) - Einkaufslisten generieren
 
-## 📁 Projektstruktur
+## Projektstruktur
 
 ```
 MealPrepHub/
@@ -142,7 +142,7 @@ MealPrepHub/
 └── README.md            # Diese Datei
 ```
 
-## 🌐 API-Endpunkte
+## API-Endpunkte
 
 ### Rezept-Endpunkte
 
@@ -183,7 +183,7 @@ MealPrepHub/
 - Gesund essen
 - Energie & Leistung
 
-## 📸 Screenshots
+## Screenshots
 
 ### Startseite
 Die Startseite bietet eine Suchleiste, Kategorie-Browsing und zufällige Rezeptentdeckung.
@@ -197,7 +197,7 @@ Organisiere deine Mahlzeiten für die ganze Woche mit Drag-and-Drop-Funktionalit
 ### Einkaufsliste
 Automatisch generierte Einkaufslisten basierend auf deinem Essensplan.
 
-## 🎓 Universitätsprojekt
+## Universitätsprojekt
 
 Dieses Projekt wurde als Universitätsaufgabe erstellt, um Folgendes zu demonstrieren:
 - Webanwendungsentwicklung mit Flask
@@ -207,7 +207,7 @@ Dieses Projekt wurde als Universitätsaufgabe erstellt, um Folgendes zu demonstr
 - Benutzeroberflächendesign
 - Datenverwaltung und Zustandsbehandlung
 
-## 🤝 Beiträge
+## Beiträge
 
 Dies ist ein Universitätsprojekt, aber Vorschläge und Verbesserungen sind willkommen! Du kannst gerne:
 1. Das Repository forken
@@ -216,22 +216,13 @@ Dies ist ein Universitätsprojekt, aber Vorschläge und Verbesserungen sind will
 4. Zum Branch pushen
 5. Einen Pull Request öffnen
 
-## 📝 Lizenz
+## Lizenz
 
 Dieses Projekt wurde für Bildungszwecke als Teil einer Universitätsaufgabe erstellt.
 
-## 👨‍💻 Autor
+## Autor
 
 **Lukas Gogol**
 - GitHub: [@LukasGogol644](https://github.com/LukasGogol644)
 
-## 🙏 Danksagungen
 
-- [TheMealDB](https://www.themealdb.com/) - Kostenlose Rezept-API
-- [OpenAI](https://openai.com/) - GPT-4 API für intelligente Essensplanung
-- [Bootstrap](https://getbootstrap.com/) - Frontend-Framework
-- [Flask](https://flask.palletsprojects.com/) - Python-Web-Framework
-
----
-
-**Mit ❤️ für gesunde Essensplanung erstellt**
