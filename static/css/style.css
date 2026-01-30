@@ -1,0 +1,404 @@
+/* ==========================================
+   RESET & GLOBAL
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0d6efd;
+    --success: #198754;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #0dcaf0;
+    --dark: #212529;
+    --light: #f8f9fa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #212529;
+}
+
+/* ==========================================
+   CONTAINER & LAYOUT
+   ========================================== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* ==========================================
+   NAVBAR STYLING
+   ========================================== */
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white !important;
+}
+
+.navbar-brand:hover {
+    color: #ffd700 !important;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #ffd700 !important;
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+.hero-section {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    margin: 2rem auto;
+    padding: 3rem 2rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.hero-section h1 {
+    color: #2d3748;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.hero-section .lead {
+    color: #4a5568;
+    font-size: 1.2rem;
+}
+
+/* ==========================================
+   CARDS
+   ========================================== */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.recipe-card:hover,
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+.card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+.category-card .card-img-top {
+    height: 180px;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-weight: 700;
+    color: #2d3748;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ==========================================
+   BADGES
+   ========================================== */
+.badge {
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin: 0.25rem;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%) !important;
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+.btn {
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(86, 171, 47, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #f45c43 0%, #eb3349 100%);
+    transform: translateY(-3px);
+}
+
+/* ==========================================
+   INPUT GROUPS
+   ========================================== */
+.input-group {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.input-group .form-control {
+    border: none;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.input-group .form-control:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.input-group .btn {
+    border-radius: 0;
+    padding: 1rem 2rem;
+}
+
+/* ==========================================
+   SECTION HEADERS
+   ========================================== */
+h1, h2, h3, h4, h5, h6 {
+    color: #2d3748;
+    font-weight: 700;
+}
+
+section h2 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ==========================================
+   LOADING SPINNER
+   ========================================== */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3rem;
+}
+
+/* ==========================================
+   ALERTS
+   ========================================== */
+.alert {
+    border: none;
+    border-radius: 15px;
+    padding: 1.5rem;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+footer {
+    background: rgba(0,0,0,0.8) !important;
+    margin-top: 3rem;
+}
+
+footer p {
+    color: rgba(255,255,255,0.8);
+}
+
+/* ==========================================
+   LIST GROUPS (Einkaufsliste)
+   ========================================== */
+.list-group-item {
+    border: none;
+    border-left: 4px solid var(--primary);
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.list-group-item input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+
+.list-group-item input[type="checkbox"]:checked + label {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+/* ==========================================
+   CARD HEADERS
+   ========================================== */
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h5 {
+    color: white !important;
+    margin: 0;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+
+    .card-img-top {
+        height: 180px;
+    }
+
+    .input-group .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.4rem;
+    }
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+.shadow-lg {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+}
+
+.rounded-lg {
+    border-radius: 15px !important;
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ==========================================
+   PRINT STYLES
+   ========================================== */
+@media print {
+    body {
+        background: white;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+}

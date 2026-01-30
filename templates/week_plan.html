@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📅 Wochenplan - MealPrep Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="fs-3">🍱</span> MealPrep Hub
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">🏠 Home</a>
+                <a class="nav-link active" href="/week-plan">📅 Wochenplan</a>
+                <a class="nav-link" href="/shopping-list">🛒 Einkaufsliste</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Week Plan Content -->
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold">📅 Mein Wochenplan</h1>
+            <div>
+                <button class="btn btn-success" onclick="generateShoppingList()">
+                    🛒 Einkaufsliste erstellen
+                </button>
+                <button class="btn btn-danger" onclick="clearWeekPlan()">
+                    🗑️ Alles löschen
+                </button>
+            </div>
+        </div>
+
+        <!-- Wochentage -->
+        <div id="weekPlanContainer">
+            <!-- Wird via JavaScript gefüllt -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-5 d-none">
+            <h3 class="text-muted">📭 Dein Wochenplan ist noch leer</h3>
+            <p class="text-muted">Suche nach Rezepten und füge sie zu deinem Plan hinzu!</p>
+            <a href="/" class="btn btn-primary">🔍 Rezepte suchen</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const days = {
+            'monday': 'Montag',
+            'tuesday': 'Dienstag',
+            'wednesday': 'Mittwoch',
+            'thursday': 'Donnerstag',
+            'friday': 'Freitag',
+            'saturday': 'Samstag',
+            'sunday': 'Sonntag'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWeekPlan();
+        });
+
+        function loadWeekPlan() {
+            const weekPlan = JSON.parse(localStorage.getItem('weekPlan') || '{}');
+            const container = document.getElementById('weekPlanContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            let isEmpty = true;
+            let html = '';
+
+            for (const [dayKey, dayName] of Object.entries(days)) {
+                const meals = weekPlan[dayKey] || [];
+
+                if (meals.length > 0) {
+                    isEmpty = false;
+                }
+
+                html += `
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">${dayName}</h5>
+                        </div>
+                        <div class="card-body">
+                            ${meals.length === 0 ?
+                                '<p class="text-muted mb-0">Keine Mahlzeiten geplant</p>' :
+                                `<div class="row g-3">
+                                    ${meals.map((meal, index) => `
+                                        <div class="col-md-4">
+                                            <div class="card">
+                                                <img src="${meal.thumb}" class="card-img-top" alt="${meal.name}">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">${meal.name}</h6>
+                                                    <span class="badge bg-primary">${meal.category}</span>
+                                                    <button class="btn btn-sm btn-danger mt-2 w-100"
+                                                            onclick="removeMeal('${dayKey}', ${index})">
+                                                        🗑️ Entfernen
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            if (isEmpty) {
+                emptyState.classList.remove('d-none');
+                container.classList.add('d-none');
+            } else {
+                emptyState.classList.add('d-none');
+                container.classList.remove('d-none');
+            }
+        }
+
+        function removeMeal(day, index) {
+            if (!confirm('Möchtest du diese Mahlzeit wirklich entfernen?')) return;
+
+            let weekPlan = JSON.parse(localStorage.getItem('weekPlan') || '{}');
+            weekPlan[day].splice(index, 1);
+
+            if (weekPlan[day].length === 0) {
+                delete weekPlan[day];
+            }
+
+            localStorage.setItem('weekPlan', JSON.stringify(weekPlan));
+            loadWeekPlan();
+        }
+
+        function clearWeekPlan() {
+            if (!confirm('Möchtest du wirklich den gesamten Wochenplan löschen?')) return;
+
+            localStorage.removeItem('weekPlan');
+            loadWeekPlan();
+        }
+
+        function generateShoppingList() {
+            const weekPlan = JSON.parse(localStorage.getItem('weekPlan') || '{}');
+            const totalMeals = Object.values(weekPlan).reduce((sum, meals) => sum + meals.length, 0);
+
+            if (totalMeals === 0) {
+                alert('⚠️ Dein Wochenplan ist leer. Füge erst Rezepte hinzu!');
+                return;
+            }
+
+            window.location.href = '/shopping-list';
+        }
+    </script>
+</body>
+</html>

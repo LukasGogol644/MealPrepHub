@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ Rezept-Details - MealPrep Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="fs-3">🍱</span> MealPrep Hub
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">🏠 Home</a>
+                <a class="nav-link" href="/week-plan">📅 Wochenplan</a>
+                <a class="nav-link" href="/shopping-list">🛒 Einkaufsliste</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Recipe Detail Content -->
+    <div class="container my-5">
+        <div id="recipeDetail">
+            <!-- Loading -->
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Lade Rezept...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add to Week Plan Modal -->
+    <div class="modal fade" id="addToWeekPlanModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📅 Zum Wochenplan hinzufügen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label">Wähle einen Tag:</label>
+                    <select id="daySelect" class="form-select">
+                        <option value="monday">Montag</option>
+                        <option value="tuesday">Dienstag</option>
+                        <option value="wednesday">Mittwoch</option>
+                        <option value="thursday">Donnerstag</option>
+                        <option value="friday">Freitag</option>
+                        <option value="saturday">Samstag</option>
+                        <option value="sunday">Sonntag</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="button" class="btn btn-primary" onclick="saveToWeekPlan()">Hinzufügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const mealId = "{{ meal_id }}";
+        let currentRecipe = null;
+
+        // Beim Laden: Rezept-Details abrufen
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecipeDetail();
+        });
+
+        async function loadRecipeDetail() {
+            try {
+                const response = await fetch(`/api/recipe/${mealId}`);
+                const data = await response.json();
+
+                if (data.meals && data.meals.length > 0) {
+                    currentRecipe = data.meals[0];
+                    displayRecipeDetail(currentRecipe);
+                } else {
+                    document.getElementById('recipeDetail').innerHTML = `
+                        <div class="alert alert-danger">Rezept nicht gefunden 😢</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('recipeDetail').innerHTML = `
+                    <div class="alert alert-danger">Fehler beim Laden: ${error}</div>
+                `;
+            }
+        }
+
+        function displayRecipeDetail(recipe) {
+            // Zutaten sammeln
+            const ingredients = [];
+            for (let i = 1; i <= 20; i++) {
+                const ingredient = recipe[`strIngredient${i}`];
+                const measure = recipe[`strMeasure${i}`];
+                if (ingredient && ingredient.trim()) {
+                    ingredients.push(`${measure} ${ingredient}`);
+                }
+            }
+
+            document.getElementById('recipeDetail').innerHTML = `
+                <div class="row">
+                    <div class="col-lg-5">
+                        <img src="${recipe.strMealThumb}" class="img-fluid rounded shadow-lg mb-4" alt="${recipe.strMeal}">
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addToWeekPlanModal">
+                                📅 Zum Wochenplan hinzufügen
+                            </button>
+                            <a href="${recipe.strYoutube || '#'}" target="_blank" class="btn btn-danger ${!recipe.strYoutube ? 'disabled' : ''}">
+                                ▶️ Video-Anleitung
+                            </a>
+                            <a href="${recipe.strSource || '#'}" target="_blank" class="btn btn-secondary ${!recipe.strSource ? 'disabled' : ''}">
+                                🔗 Original-Rezept
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <h1 class="display-5 fw-bold mb-3">${recipe.strMeal}</h1>
+
+                        <div class="mb-4">
+                            <span class="badge bg-primary fs-6">${recipe.strCategory}</span>
+                            <span class="badge bg-success fs-6">${recipe.strArea}</span>
+                            ${recipe.strTags ? recipe.strTags.split(',').map(tag => `<span class="badge bg-secondary fs-6">${tag}</span>`).join(' ') : ''}
+                        </div>
+
+                        <h3 class="fw-bold mb-3">🥘 Zutaten</h3>
+                        <ul class="list-group mb-4">
+                            ${ingredients.map(ing => `<li class="list-group-item">${ing}</li>`).join('')}
+                        </ul>
+
+                        <h3 class="fw-bold mb-3">👨‍🍳 Zubereitung</h3>
+                        <div class="card">
+                            <div class="card-body">
+                                <p style="white-space: pre-line;">${recipe.strInstructions}</p>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <strong>💡 Tipp:</strong> Füge dieses Rezept zu deinem Wochenplan hinzu,
+                            um automatisch eine Einkaufsliste zu generieren!
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveToWeekPlan() {
+            const day = document.getElementById('daySelect').value;
+
+            // LocalStorage: Wochenplan laden oder erstellen
+            let weekPlan = JSON.parse(localStorage.getItem('weekPlan') || '{}');
+
+            if (!weekPlan[day]) {
+                weekPlan[day] = [];
+            }
+
+            // Rezept hinzufügen
+            weekPlan[day].push({
+                id: currentRecipe.idMeal,
+                name: currentRecipe.strMeal,
+                thumb: currentRecipe.strMealThumb,
+                category: currentRecipe.strCategory
+            });
+
+            // Speichern
+            localStorage.setItem('weekPlan', JSON.stringify(weekPlan));
+
+            // Modal schließen
+            bootstrap.Modal.getInstance(document.getElementById('addToWeekPlanModal')).hide();
+
+            // Success Message
+            alert('✅ Rezept zum Wochenplan hinzugefügt!');
+        }
+    </script>
+</body>
+</html>

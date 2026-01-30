@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍱 MealPrep Hub - Startseite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="fs-3">🍱</span> MealPrep Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">🏠 Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/week-plan">📅 Wochenplan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shopping-list">🛒 Einkaufsliste</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section bg-light py-5">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">🍱 Willkommen zu MealPrep Hub</h1>
+            <p class="lead text-muted mb-4">
+                Plane deine Woche • Finde leckere Rezepte • Erstelle Einkaufslisten
+            </p>
+
+            <!-- Search Box -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="input-group input-group-lg shadow-sm">
+                        <input type="text" id="searchInput" class="form-control"
+                               placeholder="Suche nach Rezepten... (z.B. Chicken, Pasta, Pizza)">
+                        <button class="btn btn-primary px-4" onclick="searchRecipes()">
+                            🔍 Suchen
+                        </button>
+                        <button class="btn btn-success px-4" onclick="getRandomRecipe()">
+                            🎲 Zufällig
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+
+        <!-- Categories Section -->
+        <section class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">📂 Kategorien durchstöbern</h2>
+            </div>
+            <div id="categories" class="row g-4">
+                <!-- Wird via JavaScript gefüllt -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Lade Kategorien...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center my-5 d-none">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Suche nach Rezepten...</p>
+        </div>
+
+        <!-- Search Results -->
+        <section id="resultsSection" class="d-none">
+            <h2 class="fw-bold mb-4">🍽️ Suchergebnisse</h2>
+            <div id="results" class="row g-4"></div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">🍱 MealPrep Hub © 2026 | Entwickelt mit ❤️ von Team 7</p>
+            <small class="text-muted">Powered by TheMealDB API</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
