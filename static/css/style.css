@@ -663,3 +663,42 @@ footer .text-muted {
         border: 1px solid var(--text-primary);
     }
 }
+
+/* ==========================================
+   RANGE SLIDER - SICHTBAR
+   ========================================== */
+.form-range {
+    height: 10px;
+    background: var(--text-primary);
+    border-radius: 10px;
+}
+
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--accent-1);
+    border: 3px solid var(--text-primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: var(--accent-2);
+}
+
+.form-range::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: var(--accent-1);
+    border: 3px solid var(--text-primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.form-range::-moz-range-track {
+    height: 10px;
+    background: var(--text-primary);
+    border-radius: 10px;
+}

@@ -44,7 +44,7 @@ def get_categories():
 
 
 # ==========================================
-# ROUTE 3: REZEPT-SUCHE
+# ROUTE 3: REZEPT-SUCHE (GEFIXT!)
 # ==========================================
 @app.route('/api/search', methods=['POST'])
 def search_recipes():
@@ -66,11 +66,50 @@ def search_recipes():
         return jsonify(response.json())
 
     except Exception as e:
+        print(f"Error in search_recipes: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
 # ==========================================
-# ROUTE 4: REZEPT-DETAILS
+# ROUTE 4: FILTER
+# ==========================================
+@app.route('/api/filter', methods=['POST'])
+def filter_recipes():
+    """Filtert Rezepte nach Ernährung, Küche oder Kategorie"""
+    try:
+        data = request.get_json()
+        filter_value = data.get('filter', '')
+
+        if not filter_value:
+            return jsonify({'error': 'Filter required'}), 400
+
+        # TheMealDB nutzt unterschiedliche Endpoints für verschiedene Filter
+        # Versuch 1: Nach Area (Küche)
+        url = f"{THEMEALDB_BASE_URL}/filter.php?a={filter_value}"
+        response = requests.get(url, timeout=5)
+        result = response.json()
+
+        # Falls keine Ergebnisse, versuch Category
+        if not result.get('meals'):
+            url = f"{THEMEALDB_BASE_URL}/filter.php?c={filter_value}"
+            response = requests.get(url, timeout=5)
+            result = response.json()
+
+        # Falls immer noch keine Ergebnisse, versuch Ingredient
+        if not result.get('meals'):
+            url = f"{THEMEALDB_BASE_URL}/filter.php?i={filter_value}"
+            response = requests.get(url, timeout=5)
+            result = response.json()
+
+        return jsonify(result)
+
+    except Exception as e:
+        print(f"Error in filter_recipes: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ==========================================
+# ROUTE 5: REZEPT-DETAILS
 # ==========================================
 @app.route('/api/recipe/<meal_id>')
 def get_recipe_detail(meal_id):
@@ -85,7 +124,7 @@ def get_recipe_detail(meal_id):
 
 
 # ==========================================
-# ROUTE 5: REZEPT-DETAIL-SEITE
+# ROUTE 6: REZEPT-DETAIL-SEITE
 # ==========================================
 @app.route('/recipe/<meal_id>')
 def recipe_detail_page(meal_id):
@@ -94,7 +133,7 @@ def recipe_detail_page(meal_id):
 
 
 # ==========================================
-# ROUTE 6: ZUFÄLLIGES REZEPT
+# ROUTE 7: ZUFÄLLIGES REZEPT
 # ==========================================
 @app.route('/api/random')
 def get_random_recipe():
@@ -109,7 +148,7 @@ def get_random_recipe():
 
 
 # ==========================================
-# ROUTE 7: WOCHENPLAN-SEITE
+# ROUTE 8: WOCHENPLAN-SEITE
 # ==========================================
 @app.route('/week-plan')
 def week_plan():
@@ -118,7 +157,7 @@ def week_plan():
 
 
 # ==========================================
-# ROUTE 8: EINKAUFSLISTE-SEITE
+# ROUTE 9: EINKAUFSLISTE-SEITE
 # ==========================================
 @app.route('/shopping-list')
 def shopping_list():
@@ -127,15 +166,16 @@ def shopping_list():
 
 
 # ==========================================
-# ROUTE 9: AI-PLANNER SEITE
+# ROUTE 10: AI-PLANNER SEITE
 # ==========================================
 @app.route('/ai-planner')
 def ai_planner():
     """Rendert KI-Planer-Seite"""
     return render_template('ai_planner.html')
 
+
 # ==========================================
-# ROUTE: IMPRESSUM
+# ROUTE 11: IMPRESSUM
 # ==========================================
 @app.route('/impressum')
 def impressum():
@@ -144,7 +184,7 @@ def impressum():
 
 
 # ==========================================
-# ROUTE 10: KI-WOCHENPLAN GENERATOR
+# ROUTE 12: KI-WOCHENPLAN GENERATOR
 # ==========================================
 @app.route('/api/generate-ai-plan', methods=['POST'])
 def generate_ai_meal_plan():
@@ -157,7 +197,7 @@ def generate_ai_meal_plan():
         goal = data.get('goal', 'Gesund essen')
         calories = data.get('calories', 2000)
         protein = data.get('protein', 100)
-        dietary_preference = data.get('dietary', '')  # vegan, vegetarian, etc.
+        dietary_preference = data.get('dietary', '')
 
         # Hole verfügbare Rezepte basierend auf Präferenz
         search_terms = {
@@ -166,6 +206,8 @@ def generate_ai_meal_plan():
             'Vegan': 'vegan',
             'Vegetarisch': 'vegetarian',
             'Gesund essen': 'healthy',
+            'High Protein': 'chicken',
+            'Ausgewogen': 'chicken',
             'Energie & Leistung': 'chicken'
         }
 
@@ -222,7 +264,6 @@ AUFGABEN:
 4. Verteile Protein gleichmäßig über den Tag (Ziel: {protein}g/Tag)
 5. Achte auf Abwechslung - kein Rezept mehr als 2x pro Woche
 6. Berücksichtige das Ziel "{goal}"
-7. Beachte Ernährungspräferenzen: {dietary_preference if dietary_preference else 'Keine'}
 
 WICHTIG: Antworte AUSSCHLIESSLICH mit folgendem JSON-Format (keine Erklärungen drumherum):
 

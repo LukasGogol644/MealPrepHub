@@ -1,23 +1,6 @@
-// ==========================================
-// GLOBAL VARIABLES
-// ==========================================
-let currentSearchResults = [];
-
-// ==========================================
-// PAGE LOAD
-// ==========================================
+// Load categories on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
-
-    // Enter-Taste für Suche
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchRecipes();
-            }
-        });
-    }
 });
 
 // ==========================================
@@ -29,12 +12,9 @@ async function loadCategories() {
         const data = await response.json();
 
         const categoriesDiv = document.getElementById('categories');
-        if (!categoriesDiv) return;
-
         categoriesDiv.innerHTML = '';
 
         if (data.categories && data.categories.length > 0) {
-            // Zeige ersten 8 Kategorien
             data.categories.slice(0, 8).forEach(category => {
                 categoriesDiv.innerHTML += `
                     <div class="col-lg-3 col-md-4 col-sm-6">
@@ -50,79 +30,60 @@ async function loadCategories() {
         }
     } catch (error) {
         console.error('Error loading categories:', error);
-        const categoriesDiv = document.getElementById('categories');
-        if (categoriesDiv) {
-            categoriesDiv.innerHTML = '<div class="col-12"><p class="text-danger">Fehler beim Laden der Kategorien</p></div>';
-        }
     }
 }
 
 // ==========================================
-// REZEPT-SUCHE (NACH NAME)
+// REZEPTE SUCHEN
 // ==========================================
 async function searchRecipes() {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput ? searchInput.value.trim() : '';
+    const query = document.getElementById('searchInput').value.trim();
 
     if (!query) {
-        alert('⚠️ Bitte gib einen Suchbegriff ein!');
+        alert('Bitte gib einen Suchbegriff ein');
         return;
     }
 
-    showLoading(true);
-    hideResults();
+    showLoading();
 
     try {
         const response = await fetch('/api/search', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: query })
         });
 
         const data = await response.json();
-        showLoading(false);
-
-        if (data.meals && data.meals.length > 0) {
-            currentSearchResults = data.meals;
-            displayRecipes(data.meals);
-        } else {
-            showNoResults();
-        }
+        displayRecipes(data.meals);
     } catch (error) {
-        showLoading(false);
-        showError(error);
+        alert('Fehler bei der Suche: ' + error);
+    } finally {
+        hideLoading();
     }
 }
 
 // ==========================================
-// SUCHE NACH KATEGORIE
+// NACH KATEGORIE SUCHEN
 // ==========================================
 async function searchByCategory(category) {
-    showLoading(true);
-    hideResults();
-
-    // Scroll to results
-    window.scrollTo({ top: 600, behavior: 'smooth' });
+    showLoading();
 
     try {
         const response = await fetch('/api/search', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ category: category })
         });
 
         const data = await response.json();
-        showLoading(false);
+        displayRecipes(data.meals);
 
-        if (data.meals && data.meals.length > 0) {
-            currentSearchResults = data.meals;
-            displayRecipes(data.meals);
-        } else {
-            showNoResults();
-        }
+        // Scroll to results
+        document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
-        showLoading(false);
-        showError(error);
+        alert('Fehler beim Laden der Kategorie: ' + error);
+    } finally {
+        hideLoading();
     }
 }
 
@@ -130,112 +91,68 @@ async function searchByCategory(category) {
 // ZUFÄLLIGES REZEPT
 // ==========================================
 async function getRandomRecipe() {
-    showLoading(true);
-    hideResults();
+    showLoading();
 
     try {
         const response = await fetch('/api/random');
         const data = await response.json();
 
-        showLoading(false);
-
         if (data.meals && data.meals.length > 0) {
-            currentSearchResults = data.meals;
-            displayRecipes(data.meals);
+            window.location.href = `/recipe/${data.meals[0].idMeal}`;
         }
     } catch (error) {
-        showLoading(false);
-        showError(error);
+        alert('Fehler beim Laden: ' + error);
+    } finally {
+        hideLoading();
     }
 }
 
 // ==========================================
 // REZEPTE ANZEIGEN
 // ==========================================
-function displayRecipes(recipes) {
+function displayRecipes(meals) {
     const resultsSection = document.getElementById('resultsSection');
-    const resultsDiv = document.getElementById('results');
+    const resultsDiv = document.getElementById('searchResults');
 
-    if (!resultsDiv) return;
+    if (!meals || meals.length === 0) {
+        resultsDiv.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Keine Rezepte gefunden</p></div>';
+        resultsSection.classList.remove('d-none');
+        return;
+    }
 
     resultsDiv.innerHTML = '';
-    resultsSection.classList.remove('d-none');
 
-    recipes.forEach(recipe => {
+    meals.forEach(meal => {
         resultsDiv.innerHTML += `
             <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card recipe-card h-100">
-                    <img src="${recipe.strMealThumb}" class="card-img-top" alt="${recipe.strMeal}">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${recipe.strMeal}</h5>
-                        <p class="card-text flex-grow-1">
-                            ${recipe.strCategory ? `<span class="badge bg-primary">${recipe.strCategory}</span>` : ''}
-                            ${recipe.strArea ? `<span class="badge bg-success">${recipe.strArea}</span>` : ''}
-                        </p>
-                        <button class="btn btn-primary w-100" onclick="viewRecipe('${recipe.idMeal}')">
-                            📖 Details anzeigen
-                        </button>
+                <div class="card recipe-card h-100" onclick="viewRecipe('${meal.idMeal}')">
+                    <img src="${meal.strMealThumb}" class="card-img-top" alt="${meal.strMeal}">
+                    <div class="card-body">
+                        <h6 class="card-title">${meal.strMeal}</h6>
+                        <span class="badge bg-primary">${meal.strCategory || 'Rezept'}</span>
                     </div>
                 </div>
             </div>
         `;
     });
+
+    resultsSection.classList.remove('d-none');
 }
 
 // ==========================================
-// REZEPT ANZEIGEN (DETAIL-SEITE)
+// ZU REZEPT-DETAIL NAVIGIEREN
 // ==========================================
 function viewRecipe(mealId) {
     window.location.href = `/recipe/${mealId}`;
 }
 
 // ==========================================
-// UI HELPER FUNCTIONS
+// LOADING STATES
 // ==========================================
-function showLoading(show) {
-    const loadingDiv = document.getElementById('loading');
-    if (loadingDiv) {
-        loadingDiv.classList.toggle('d-none', !show);
-    }
+function showLoading() {
+    document.getElementById('loadingSection').classList.remove('d-none');
 }
 
-function hideResults() {
-    const resultsSection = document.getElementById('resultsSection');
-    if (resultsSection) {
-        resultsSection.classList.add('d-none');
-    }
-}
-
-function showNoResults() {
-    const resultsDiv = document.getElementById('results');
-    const resultsSection = document.getElementById('resultsSection');
-
-    if (resultsDiv && resultsSection) {
-        resultsSection.classList.remove('d-none');
-        resultsDiv.innerHTML = `
-            <div class="col-12">
-                <div class="alert alert-warning text-center">
-                    <h5>😢 Keine Rezepte gefunden</h5>
-                    <p>Versuche es mit einem anderen Suchbegriff!</p>
-                </div>
-            </div>
-        `;
-    }
-}
-
-function showError(error) {
-    const resultsDiv = document.getElementById('results');
-    const resultsSection = document.getElementById('resultsSection');
-
-    if (resultsDiv && resultsSection) {
-        resultsSection.classList.remove('d-none');
-        resultsDiv.innerHTML = `
-            <div class="col-12">
-                <div class="alert alert-danger text-center">
-                    <h5>❌ Fehler</h5>
-                    <p>${error}</p>
-                </div>
-            </div>
-        `;
-    }
+function hideLoading() {
+    document.getElementById('loadingSection').classList.add('d-none');
 }
