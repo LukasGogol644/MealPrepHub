@@ -1,4 +1,21 @@
 /* ==========================================
+   COLOR PALETTE
+   ========================================== */
+:root {
+    --bg-primary: #F0EEE6;          /* Heller Beige Hintergrund */
+    --text-primary: #000000;         /* Schwarz */
+    --text-secondary: #333333;       /* Dunkelgrau */
+
+    --accent-1: #BCD2CA;            /* Mint/Türkis */
+    --accent-2: #CBCADB;            /* Helles Lila */
+    --button-color: #E3DBCC;        /* Beige Button */
+
+    --white: #FFFFFF;
+    --border-color: #000000;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================
    RESET & GLOBAL
    ========================================== */
 * {
@@ -7,114 +24,179 @@
     box-sizing: border-box;
 }
 
-:root {
-    --primary: #0d6efd;
-    --success: #198754;
-    --danger: #dc3545;
-    --warning: #ffc107;
-    --info: #0dcaf0;
-    --dark: #212529;
-    --light: #f8f9fa;
-}
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    background-attachment: fixed;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     min-height: 100vh;
-    color: #212529;
+    line-height: 1.6;
 }
 
 /* ==========================================
-   CONTAINER & LAYOUT
+   TYPOGRAPHY
    ========================================== */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+p {
+    color: var(--text-secondary);
 }
 
 /* ==========================================
-   NAVBAR STYLING
+   NAVBAR
    ========================================== */
 .navbar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: var(--white) !important;
+    box-shadow: 0 2px 8px var(--shadow);
     padding: 1rem 0;
+    border-bottom: 3px solid var(--text-primary);
 }
 
 .navbar-brand {
     font-size: 1.8rem;
     font-weight: 700;
-    color: white !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease;
 }
 
 .navbar-brand:hover {
-    color: #ffd700 !important;
+    color: var(--text-primary) !important;
+    transform: translateY(-2px);
 }
 
 .nav-link {
-    color: rgba(255,255,255,0.9) !important;
-    font-weight: 500;
+    color: var(--text-primary) !important;
+    font-weight: 600;
     margin: 0 0.5rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 0.5rem 1rem !important;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+    color: var(--text-primary) !important;
+    background-color: var(--accent-1);
+    border-radius: 6px;
+}
+
 .nav-link.active {
-    color: #ffd700 !important;
-    transform: translateY(-2px);
+    color: var(--text-primary) !important;
+    background-color: var(--accent-2);
+    border-radius: 6px;
 }
 
 /* ==========================================
    HERO SECTION
    ========================================== */
 .hero-section {
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
+    background-color: var(--white);
+    border-radius: 16px;
     margin: 2rem auto;
     padding: 3rem 2rem;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px var(--shadow);
+    border: 3px solid var(--text-primary);
 }
 
 .hero-section h1 {
-    color: #2d3748;
+    color: var(--text-primary);
     font-weight: 800;
     margin-bottom: 1rem;
 }
 
 .hero-section .lead {
-    color: #4a5568;
+    color: var(--text-secondary);
     font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* ==========================================
+   GOAL BUTTONS (Hauptbuttons auf Startseite)
+   ========================================== */
+.goal-btn {
+    padding: 2rem;
+    border: 3px solid var(--text-primary);
+    border-radius: 12px;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    height: 100%;
+    position: relative;
+}
+
+.goal-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px var(--shadow);
+    background-color: var(--accent-1);
+}
+
+.goal-btn:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.goal-btn.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+}
+
+.goal-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.goal-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.goal-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
 }
 
 /* ==========================================
    CARDS
    ========================================== */
 .card {
-    border: none;
-    border-radius: 15px;
+    border: 3px solid var(--text-primary);
+    border-radius: 12px;
     overflow: hidden;
     transition: all 0.3s ease;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: var(--white);
+    box-shadow: 0 2px 8px var(--shadow);
     height: 100%;
 }
 
 .recipe-card:hover,
 .category-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px var(--shadow);
 }
 
 .card-img-top {
     height: 220px;
     object-fit: cover;
     transition: transform 0.3s ease;
+    border-bottom: 3px solid var(--text-primary);
 }
 
 .card:hover .card-img-top {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .category-card .card-img-top {
@@ -127,9 +209,29 @@ body {
 
 .card-title {
     font-weight: 700;
-    color: #2d3748;
+    color: var(--text-primary);
     font-size: 1.1rem;
     margin-bottom: 0.75rem;
+}
+
+.card-text {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.card-header {
+    background-color: var(--accent-1) !important;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-bottom: 3px solid var(--text-primary);
+}
+
+.card-header h5,
+.card-header h4,
+.card-header h3 {
+    color: var(--text-primary) !important;
+    margin: 0;
+    font-weight: 700;
 }
 
 /* ==========================================
@@ -137,104 +239,176 @@ body {
    ========================================== */
 .badge {
     padding: 0.5rem 1rem;
-    font-weight: 600;
-    border-radius: 20px;
+    font-weight: 700;
+    border-radius: 6px;
     font-size: 0.85rem;
     margin: 0.25rem;
+    border: 2px solid var(--text-primary);
 }
 
-.bg-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+.bg-primary,
+.badge.bg-primary {
+    background-color: var(--accent-1) !important;
+    color: var(--text-primary) !important;
 }
 
-.bg-success {
-    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%) !important;
+.bg-success,
+.badge.bg-success {
+    background-color: var(--accent-2) !important;
+    color: var(--text-primary) !important;
 }
 
-.bg-danger {
-    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%) !important;
+.bg-secondary,
+.badge.bg-secondary {
+    background-color: var(--button-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.bg-danger,
+.badge.bg-danger {
+    background-color: #E8C4B8 !important;
+    color: var(--text-primary) !important;
 }
 
 /* ==========================================
    BUTTONS
    ========================================== */
 .btn {
-    border: none;
+    border: 3px solid var(--text-primary);
     padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: all 0.2s ease;
     cursor: pointer;
+    background-color: var(--button-color);
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    background-color: var(--accent-1);
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.btn:active {
+    transform: translateY(2px) scale(0.98) !important;
+    box-shadow: 0 2px 4px var(--shadow) !important;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background-color: var(--accent-1);
+    color: var(--text-primary);
+    border: 3px solid var(--text-primary);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    background-color: var(--accent-2);
+    color: var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-    color: white;
+    background-color: var(--accent-2);
+    color: var(--text-primary);
+    border: 3px solid var(--text-primary);
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(86, 171, 47, 0.4);
+    background-color: var(--accent-1);
+    color: var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-    color: white;
+    background-color: #E8C4B8;
+    color: var(--text-primary);
+    border: 3px solid var(--text-primary);
 }
 
 .btn-danger:hover {
-    background: linear-gradient(135deg, #f45c43 0%, #eb3349 100%);
-    transform: translateY(-3px);
+    background-color: #D9B5A9;
+    color: var(--text-primary);
+}
+
+.btn-outline-light {
+    border: 3px solid var(--text-primary);
+    color: var(--text-primary);
+    background-color: var(--white);
+}
+
+.btn-outline-light:hover {
+    background-color: var(--button-color);
+    color: var(--text-primary);
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
 }
 
 /* ==========================================
    INPUT GROUPS
    ========================================== */
 .input-group {
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow);
+    border: 3px solid var(--text-primary);
 }
 
 .input-group .form-control {
     border: none;
     padding: 1rem 1.5rem;
     font-size: 1.1rem;
+    background-color: var(--white);
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .input-group .form-control:focus {
     box-shadow: none;
     outline: none;
+    background-color: var(--white);
 }
 
 .input-group .btn {
     border-radius: 0;
     padding: 1rem 2rem;
+    border: none;
+    border-left: 3px solid var(--text-primary);
 }
 
 /* ==========================================
-   SECTION HEADERS
+   FORMS
    ========================================== */
-h1, h2, h3, h4, h5, h6 {
-    color: #2d3748;
-    font-weight: 700;
+.form-control,
+.form-select {
+    border: 3px solid var(--text-primary);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background-color: var(--white);
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
-section h2 {
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px var(--accent-1);
+    background-color: var(--white);
+    outline: none;
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-range {
+    accent-color: var(--accent-1);
 }
 
 /* ==========================================
@@ -243,60 +417,55 @@ section h2 {
 .spinner-border {
     width: 3rem;
     height: 3rem;
-    border-width: 0.3rem;
+    border-width: 0.4rem;
+    color: var(--text-primary);
+    border-right-color: var(--accent-1);
 }
 
 /* ==========================================
    ALERTS
    ========================================== */
 .alert {
-    border: none;
-    border-radius: 15px;
+    border: 3px solid var(--text-primary);
+    border-radius: 12px;
     padding: 1.5rem;
-    font-weight: 500;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-weight: 600;
+    box-shadow: 0 2px 8px var(--shadow);
+    background-color: var(--white);
+    color: var(--text-primary);
 }
 
 .alert-warning {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
+    background-color: #FFF4E6;
 }
 
 .alert-info {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
+    background-color: var(--accent-2);
+}
+
+.alert-success {
+    background-color: var(--accent-1);
 }
 
 .alert-danger {
-    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-    color: white;
+    background-color: #FDECEA;
 }
 
 /* ==========================================
-   FOOTER
-   ========================================== */
-footer {
-    background: rgba(0,0,0,0.8) !important;
-    margin-top: 3rem;
-}
-
-footer p {
-    color: rgba(255,255,255,0.8);
-}
-
-/* ==========================================
-   LIST GROUPS (Einkaufsliste)
+   LIST GROUPS
    ========================================== */
 .list-group-item {
-    border: none;
-    border-left: 4px solid var(--primary);
+    border: 3px solid var(--text-primary);
+    background-color: var(--white);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    font-weight: 600;
 }
 
 .list-group-item:hover {
-    background: #f8f9fa;
+    background-color: var(--accent-1);
     transform: translateX(5px);
 }
 
@@ -304,25 +473,96 @@ footer p {
     width: 1.5rem;
     height: 1.5rem;
     cursor: pointer;
+    accent-color: var(--accent-1);
 }
 
 .list-group-item input[type="checkbox"]:checked + label {
     text-decoration: line-through;
-    color: #6c757d;
+    opacity: 0.5;
 }
 
 /* ==========================================
-   CARD HEADERS
+   FOOTER
    ========================================== */
-.card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    border: none;
-    padding: 1rem 1.5rem;
+footer {
+    background-color: var(--white) !important;
+    margin-top: 3rem;
+    border-top: 3px solid var(--text-primary);
+    box-shadow: 0 -2px 8px var(--shadow);
+    padding: 2rem 0 !important;
 }
 
-.card-header h5 {
-    color: white !important;
-    margin: 0;
+footer p {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+footer .text-muted {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.footer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--button-color);
+    border: 3px solid var(--text-primary);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.footer-btn:hover {
+    background-color: var(--accent-1);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.footer-btn:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+/* ==========================================
+   MODALS
+   ========================================== */
+.modal-content {
+    background-color: var(--white);
+    border: 3px solid var(--text-primary);
+    border-radius: 12px;
+}
+
+.modal-header {
+    border-bottom: 3px solid var(--text-primary);
+    background-color: var(--accent-1);
+}
+
+.modal-title {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.modal-footer {
+    border-top: 3px solid var(--text-primary);
+    background-color: var(--bg-primary);
+}
+
+.btn-close {
+    filter: brightness(0);
 }
 
 /* ==========================================
@@ -349,6 +589,23 @@ footer p {
     .navbar-brand {
         font-size: 1.4rem;
     }
+
+    .goal-btn {
+        padding: 1.5rem;
+    }
+
+    .goal-icon {
+        font-size: 2.5rem;
+    }
+
+    .footer-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .footer-btn {
+        justify-content: center;
+    }
 }
 
 /* ==========================================
@@ -366,22 +623,26 @@ footer p {
 }
 
 .card {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.5s ease-out;
 }
 
 /* ==========================================
    UTILITY CLASSES
    ========================================== */
 .shadow-lg {
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 8px 20px var(--shadow) !important;
 }
 
-.rounded-lg {
-    border-radius: 15px !important;
+.text-white {
+    color: var(--white) !important;
 }
 
-.text-shadow {
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+.text-primary {
+    color: var(--text-primary) !important;
+}
+
+.bg-light {
+    background-color: var(--bg-primary) !important;
 }
 
 /* ==========================================
@@ -399,6 +660,6 @@ footer p {
     .card {
         page-break-inside: avoid;
         box-shadow: none;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--text-primary);
     }
 }
