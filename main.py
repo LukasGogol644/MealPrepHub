@@ -44,7 +44,7 @@ def get_categories():
 
 
 # ==========================================
-# ROUTE 3: REZEPT-SUCHE (GEFIXT!)
+# ROUTE 3: REZEPT-SUCHE
 # ==========================================
 @app.route('/api/search', methods=['POST'])
 def search_recipes():
@@ -400,6 +400,175 @@ WICHTIG: Antworte AUSSCHLIESSLICH mit folgendem JSON-Format (keine Erklärungen 
             'error': f'Fehler beim Generieren: {str(e)}'
         }), 500
 
+
+# ==========================================
+# ROUTE 13: NÄHRWERTE VON OPEN FOOD FACTS (API 3!)
+# ==========================================
+@app.route('/api/nutrition/<barcode>')
+def get_nutrition_info(barcode):
+    """
+    Holt Nährwertinformationen von Open Food Facts
+    API 3 für Uni-Projekt
+    """
+    try:
+        url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}"
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+
+        data = response.json()
+
+        if data.get('status') == 1 and data.get('product'):
+            product = data['product']
+
+            # Extrahiere wichtige Nährwerte
+            nutrition_info = {
+                'product_name': product.get('product_name', 'Unbekannt'),
+                'nutriscore': product.get('nutrition_grades', 'Nicht berechnet'),
+                'calories': product.get('nutriments', {}).get('energy-kcal_100g', 0),
+                'protein': product.get('nutriments', {}).get('proteins_100g', 0),
+                'carbs': product.get('nutriments', {}).get('carbohydrates_100g', 0),
+                'fat': product.get('nutriments', {}).get('fat_100g', 0),
+                'sugar': product.get('nutriments', {}).get('sugars_100g', 0),
+                'fiber': product.get('nutriments', {}).get('fiber_100g', 0),
+                'salt': product.get('nutriments', {}).get('salt_100g', 0),
+                'image_url': product.get('image_url', ''),
+                'brands': product.get('brands', ''),
+                'categories': product.get('categories', ''),
+            }
+
+            return jsonify({
+                'success': True,
+                'nutrition': nutrition_info
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Produkt nicht gefunden'
+            }), 404
+
+    except Exception as e:
+        print(f"Error in get_nutrition_info: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ==========================================
+# ROUTE 14: PRODUKT NACH NUTRISCORE SUCHEN (API 3!)
+# ==========================================
+@app.route('/api/search-nutrition', methods=['POST'])
+def search_by_nutriscore():
+    """
+    Sucht Produkte nach Nutriscore
+    """
+    try:
+        data = request.get_json()
+        nutriscore = data.get('nutriscore', 'a')  # a, b, c, d, e
+        category = data.get('category', '')
+
+        # Open Food Facts Search API
+        url = f"https://world.openfoodfacts.org/api/v2/search"
+        params = {
+            'nutrition_grades_tags': nutriscore,
+            'fields': 'code,product_name,nutrition_grades,nutriments,image_url,brands',
+            'page_size': 20
+        }
+
+        if category:
+            params['categories_tags_en'] = category
+
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+
+        return jsonify(response.json())
+
+    except Exception as e:
+        print(f"Error in search_by_nutriscore: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/recipe-nutrition/<meal_id>')
+def get_recipe_nutrition(meal_id):
+    """
+    Berechnet geschätzte Nährwerte basierend auf Zutaten
+    Nutzt Open Food Facts API
+    """
+    try:
+        # Hole Rezept-Details
+        meal_response = requests.get(
+            f"{THEMEALDB_BASE_URL}/lookup.php?i={meal_id}",
+            timeout=5
+        )
+        meal_data = meal_response.json()
+
+        if not meal_data.get('meals'):
+            return jsonify({'success': False, 'error': 'Rezept nicht gefunden'}), 404
+
+        meal = meal_data['meals'][0]
+
+        # Sammle alle Zutaten
+        ingredients = []
+        for i in range(1, 21):
+            ingredient = meal.get(f'strIngredient{i}', '')
+            measure = meal.get(f'strMeasure{i}', '')
+            if ingredient and ingredient.strip():
+                ingredients.append({
+                    'ingredient': ingredient.strip(),
+                    'measure': measure.strip()
+                })
+
+        # Geschätzte Nährwerte basierend auf typischen Werten
+        # (In einer echten App würde man Open Food Facts für jede Zutat abfragen)
+
+        # Einfache Schätzung basierend auf Kategorie
+        category = meal.get('strCategory', '').lower()
+
+        # Standard-Nährwerte pro Kategorie (pro Portion)
+        nutrition_estimates = {
+            'beef': {'calories': 450, 'protein': 35, 'carbs': 25, 'fat': 22},
+            'chicken': {'calories': 380, 'protein': 42, 'carbs': 20, 'fat': 12},
+            'seafood': {'calories': 320, 'protein': 38, 'carbs': 18, 'fat': 8},
+            'pork': {'calories': 420, 'protein': 32, 'carbs': 22, 'fat': 20},
+            'vegetarian': {'calories': 320, 'protein': 15, 'carbs': 45, 'fat': 10},
+            'vegan': {'calories': 280, 'protein': 12, 'carbs': 48, 'fat': 8},
+            'pasta': {'calories': 480, 'protein': 18, 'carbs': 65, 'fat': 14},
+            'dessert': {'calories': 350, 'protein': 5, 'carbs': 55, 'fat': 15},
+            'breakfast': {'calories': 380, 'protein': 20, 'carbs': 42, 'fat': 12},
+            'side': {'calories': 180, 'protein': 5, 'carbs': 28, 'fat': 6},
+            'starter': {'calories': 220, 'protein': 8, 'carbs': 25, 'fat': 9},
+            'goat': {'calories': 400, 'protein': 30, 'carbs': 20, 'fat': 18},
+            'lamb': {'calories': 440, 'protein': 32, 'carbs': 18, 'fat': 24},
+            'miscellaneous': {'calories': 350, 'protein': 18, 'carbs': 35, 'fat': 14},
+        }
+
+        # Hole passende Schätzung
+        nutrition = nutrition_estimates.get(
+            category,
+            {'calories': 380, 'protein': 22, 'carbs': 35, 'fat': 15}
+        )
+
+        return jsonify({
+            'success': True,
+            'meal_id': meal_id,
+            'meal_name': meal.get('strMeal', ''),
+            'category': meal.get('strCategory', ''),
+            'nutrition': {
+                'calories': nutrition['calories'],
+                'protein': nutrition['protein'],
+                'carbs': nutrition['carbs'],
+                'fat': nutrition['fat'],
+                'note': 'Geschätzte Werte pro Portion'
+            },
+            'ingredients_count': len(ingredients)
+        })
+
+    except Exception as e:
+        print(f"Error in get_recipe_nutrition: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

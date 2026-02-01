@@ -11,11 +11,10 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                MealPrep Hub
-            </a>
+            <a class="navbar-brand" href="/">MealPrep Hub</a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/">Rezepte</a>
+                <a class="nav-link" href="/ai-planner">KI-Planer</a>
                 <a class="nav-link active" href="/week-plan">Wochenplan</a>
                 <a class="nav-link" href="/shopping-list">Einkaufsliste</a>
             </div>
@@ -36,6 +35,36 @@
             </div>
         </div>
 
+        <!-- Wochendurchschnitt -->
+        <div id="weekSummary" class="card shadow-lg mb-4 d-none">
+            <div class="card-header" style="background-color: var(--accent-1) !important;">
+                <h4 class="mb-0">Durchschnittliche Nährwerte pro Tag</h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h2 id="avgCalories" class="mb-0">-</h2>
+                        <small class="text-muted">kcal / Tag</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h2 id="avgProtein" class="mb-0">-</h2>
+                        <small class="text-muted">g Protein / Tag</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h2 id="avgCarbs" class="mb-0">-</h2>
+                        <small class="text-muted">g Kohlenhydrate / Tag</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h2 id="avgFat" class="mb-0">-</h2>
+                        <small class="text-muted">g Fett / Tag</small>
+                    </div>
+                </div>
+                <p class="text-muted text-center mt-3 mb-0">
+                    <small>Basierend auf geschätzten Werten</small>
+                </p>
+            </div>
+        </div>
+
         <!-- Wochentage -->
         <div id="weekPlanContainer">
             <!-- Wird via JavaScript gefüllt -->
@@ -44,8 +73,8 @@
         <!-- Empty State -->
         <div id="emptyState" class="text-center py-5 d-none">
             <h3 class="text-muted">Ihr Wochenplan ist leer</h3>
-            <p class="text-muted">Erstellen Sie einen personalisierten Plan auf der Startseite</p>
-            <a href="/" class="btn btn-primary">Zur Startseite</a>
+            <p class="text-muted">Erstellen Sie einen personalisierten Plan auf der KI-Planer Seite</p>
+            <a href="/ai-planner" class="btn btn-primary">Zum KI-Planer</a>
         </div>
     </div>
 
@@ -53,12 +82,16 @@
     <footer class="mt-5">
         <div class="container text-center">
             <p class="mb-0 fs-5">MealPrep Hub © 2026</p>
-            <small class="text-muted d-block mb-3">KI-gestützter Wochenplaner für gesunde Ernährung</small>
-
+            <small class="text-muted d-block mb-3">KI-gestützter Wochenplaner</small>
+            <div class="footer-buttons">
+                <a href="/" class="footer-btn">Rezepte</a>
+                <a href="/ai-planner" class="footer-btn">KI-Planer</a>
+                <a href="/week-plan" class="footer-btn">Wochenplan</a>
+                <a href="/shopping-list" class="footer-btn">Einkaufsliste</a>
+                <a href="/impressum" class="footer-btn">Impressum</a>
+            </div>
             <div class="mt-3">
-                <a href="/impressum" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">
-                    Impressum
-                </a>
+                <small class="text-muted">Powered by OpenAI GPT-4o & TheMealDB API</small>
             </div>
         </div>
     </footer>
@@ -79,7 +112,7 @@
             loadWeekPlan();
         });
 
-        function loadWeekPlan() {
+        async function loadWeekPlan() {
             const weekPlan = JSON.parse(localStorage.getItem('weekPlan') || '{}');
             const container = document.getElementById('weekPlanContainer');
             const emptyState = document.getElementById('emptyState');
@@ -87,11 +120,27 @@
             let isEmpty = true;
             let html = '';
 
+            // Lade Nährwerte für alle Mahlzeiten
             for (const [dayKey, dayName] of Object.entries(days)) {
                 const meals = weekPlan[dayKey] || [];
 
                 if (meals.length > 0) {
                     isEmpty = false;
+
+                    // Lade Nährwerte falls nicht vorhanden
+                    for (let meal of meals) {
+                        if (!meal.nutrition && meal.id) {
+                            try {
+                                const response = await fetch(`/api/recipe-nutrition/${meal.id}`);
+                                const data = await response.json();
+                                if (data.success) {
+                                    meal.nutrition = data.nutrition;
+                                }
+                            } catch (error) {
+                                console.error('Error loading nutrition:', error);
+                            }
+                        }
+                    }
                 }
 
                 html += `
@@ -105,11 +154,21 @@
                                 `<div class="row g-3">
                                     ${meals.map((meal, index) => `
                                         <div class="col-md-4">
-                                            <div class="card">
+                                            <div class="card h-100">
                                                 <img src="${meal.thumb}" class="card-img-top" alt="${meal.name}">
                                                 <div class="card-body">
                                                     <h6 class="card-title">${meal.name}</h6>
-                                                    <span class="badge bg-primary">${meal.category}</span>
+                                                    <span class="badge bg-primary mb-2">${meal.category}</span>
+
+                                                    ${meal.nutrition ? `
+                                                        <div class="mt-2">
+                                                            <small class="d-block"><strong>${meal.nutrition.calories}</strong> kcal</small>
+                                                            <small class="d-block">${meal.nutrition.protein}g Protein</small>
+                                                            <small class="d-block">${meal.nutrition.carbs}g Kohlenhydrate</small>
+                                                            <small class="d-block">${meal.nutrition.fat}g Fett</small>
+                                                        </div>
+                                                    ` : ''}
+
                                                     <button class="btn btn-sm btn-danger mt-2 w-100"
                                                             onclick="removeMeal('${dayKey}', ${index})">
                                                         Entfernen
@@ -127,12 +186,49 @@
 
             container.innerHTML = html;
 
+            // Speichere aktualisierte Daten mit Nährwerten
+            localStorage.setItem('weekPlan', JSON.stringify(weekPlan));
+
             if (isEmpty) {
                 emptyState.classList.remove('d-none');
                 container.classList.add('d-none');
+                document.getElementById('weekSummary').classList.add('d-none');
             } else {
                 emptyState.classList.add('d-none');
                 container.classList.remove('d-none');
+                calculateWeekSummary(weekPlan);
+            }
+        }
+
+        function calculateWeekSummary(weekPlan) {
+            let totalCalories = 0;
+            let totalProtein = 0;
+            let totalCarbs = 0;
+            let totalFat = 0;
+            let totalMeals = 0;
+
+            for (const day in weekPlan) {
+                const meals = weekPlan[day];
+                for (const meal of meals) {
+                    if (meal.nutrition) {
+                        totalCalories += meal.nutrition.calories;
+                        totalProtein += meal.nutrition.protein;
+                        totalCarbs += meal.nutrition.carbs;
+                        totalFat += meal.nutrition.fat;
+                        totalMeals++;
+                    }
+                }
+            }
+
+            if (totalMeals > 0) {
+                const daysWithMeals = Object.keys(weekPlan).filter(day => weekPlan[day].length > 0).length;
+
+                document.getElementById('avgCalories').textContent = Math.round(totalCalories / daysWithMeals);
+                document.getElementById('avgProtein').textContent = Math.round(totalProtein / daysWithMeals);
+                document.getElementById('avgCarbs').textContent = Math.round(totalCarbs / daysWithMeals);
+                document.getElementById('avgFat').textContent = Math.round(totalFat / daysWithMeals);
+
+                document.getElementById('weekSummary').classList.remove('d-none');
             }
         }
 
